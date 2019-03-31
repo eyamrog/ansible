@@ -1,0 +1,12 @@
+---
+# tasks file for squid
+- name: Install squid
+  apt:
+    name: squid
+
+- name: Configure squid
+  template:
+    src: templates/squid.conf.j2
+    dest: /etc/squid/squid.conf
+    backup: yes
+  notify: Restart squid

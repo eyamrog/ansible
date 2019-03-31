@@ -1,0 +1,5 @@
+---
+# tasks file for dnsmasq_controller
+- name: Install dnsmasq
+  apt:
+    name: dnsmasq

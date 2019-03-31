@@ -1,0 +1,19 @@
+---
+# vars file for ansible
+# Hostname
+hostname: oc-host1
+
+# Ansible group
+ansible_mgmtgroup: ansible
+
+# Ansible user
+ansible_mgmtuser: ansible
+
+# Ansible SSH key
+ansible_key: /home/ansible/.ssh/AWS20171012Coda
+
+# Git destination to clone the oc-startup Git repository
+oc_startup_git_dest: ansible
+
+# Git repo for oc-startup
+oc_startup_repo: git@git.rosetta.ericssondevops.com:MELA-AMX-ONE_CORE/MELA-AMX-ONE-CORE.git

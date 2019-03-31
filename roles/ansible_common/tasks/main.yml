@@ -1,0 +1,34 @@
+---
+# tasks file for ansible_common
+- name: Update apt cache and upgrade packages
+  apt:
+    update-cache: yes
+    upgrade: yes
+
+- name: Reboot the server if needed
+  include_role:
+    name: reboot
+
+- name: Create group ansible
+  group:
+    name: "{{ ansible_mgmtgroup }}"
+
+- name: Create user ansible
+  user:
+    name: "{{ ansible_mgmtuser }}"
+    password: "{{ 'ansible' | password_hash('sha512', 'oc-startup') }}"
+    shell: /bin/bash
+    group: "{{ ansible_mgmtgroup }}"
+    groups: sudo
+    append: yes
+
+- name: Make user ansible a passwordless sudoer
+  template:
+    src: templates/ansible-sudoer.j2
+    dest: /etc/sudoers.d/ansible
+    backup: yes
+
+- name: Install Ansible SSH key
+  authorized_key:
+    user: "{{ ansible_mgmtuser }}"
+    key: "{{ lookup('file', '{{ ansible_key }}') }}"

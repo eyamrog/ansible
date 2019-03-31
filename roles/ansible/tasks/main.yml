@@ -1,0 +1,96 @@
+---
+# tasks file for ansible
+- name: Update hostname
+  hostname:
+    name: "{{ hostname }}"
+
+- name: Update apt cache and upgrade packages
+  apt:
+    update-cache: yes
+    upgrade: yes
+
+- name: Reboot the server if needed
+  include_role:
+    name: reboot
+
+- name: Create group ansible
+  group:
+    name: "{{ ansible_mgmtgroup }}"
+
+- name: Create user ansible
+  user:
+    name: "{{ ansible_mgmtuser }}"
+    password: "{{ 'ansible' | password_hash('sha512', 'oc-startup') }}"
+    group: "{{ ansible_mgmtgroup }}"
+    groups: sudo
+    append: yes
+
+- name: Make user ansible a passwordless sudoer
+  template:
+    src: templates/ansible-sudoer.j2
+    dest: /etc/sudoers.d/ansible
+    backup: yes
+
+- name: Install Ansible SSH key
+  authorized_key:
+    user: "{{ ansible_mgmtuser }}"
+    key: "{{ lookup('file', '{{ ansible_key }}') }}"
+
+- name: Install Ansible
+  apt:
+    name: ansible
+
+- name: Configure Git ansible user
+  template:
+    src: templates/gitconfig-eyamrog.j2
+    dest: "/home/{{ ansible_mgmtuser }}/.gitconfig"
+    owner: "{{ ansible_mgmtuser }}"
+    group: "{{ ansible_mgmtgroup }}"
+    mode: 0664
+
+- name: Create Git destination directory to clone the oc-startup Git repository
+  file:
+    path: "{{ oc_startup_git_dest }}"
+    state: directory
+    owner: "{{ ansible_mgmtuser }}"
+    group: "{{ ansible_mgmtgroup }}"
+    mode: 0775
+
+#- name: Clone oc-startup Git repository
+#  git:
+#      repo: "{{ oc_startup_repo }}"
+#      dest: "{{ oc_startup_git_dest }}"
+
+- name: Install squid3
+  apt:
+    name: squid3
+
+- name: Configure squid3
+  template:
+    src: templates/squid.conf.j2
+    dest: /etc/squid/squid.conf
+    backup: yes
+  notify:
+    - Restart squid3
+
+- name: Install apt-cacher-ng
+  apt:
+    name: apt-cacher-ng
+
+- name: Configure apt-cacher-ng
+  template:
+    src: templates/acng.conf.j2
+    dest: /etc/apt-cacher-ng/acng.conf
+    backup: yes
+  notify:
+    - Restart apt-cacher-ng
+
+- name: Configure the local Aptitude client to use apt-cacher-ng
+  template:
+    src: templates/02proxy-startup.j2
+    dest: /etc/apt/apt.conf.d/02proxy
+    backup: yes
+
+- name: Install dnsmasq
+  apt:
+    name: dnsmasq

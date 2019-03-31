@@ -1,0 +1,8 @@
+---
+# tasks file for reboot
+- name: Check if reboot is needed because the kernel has been upgraded
+  include_tasks: check-reboot-needed.yml
+
+- name: Reboot the server
+  include_tasks: reboot-server.yml
+  when: "reboot_server_needed | default(reboot_server_always)"

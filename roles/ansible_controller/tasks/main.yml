@@ -1,0 +1,29 @@
+---
+# tasks file for ansible_controller
+- name: Install Ansible
+  apt:
+    name: ansible
+
+- name: Transfer the Ansible ssh key
+  template:
+    src: templates/AWS20171012Coda.j2
+    dest: "/home/{{ ansible_mgmtuser }}/.ssh/AWS20171012Coda"
+    owner: "{{ ansible_mgmtuser }}"
+    group: "{{ ansible_mgmtgroup }}"
+    mode: 0600
+
+- name: Configure Git ansible user
+  template:
+    src: templates/gitconfig-eyamrog.j2
+    dest: "/home/{{ ansible_mgmtuser }}/.gitconfig"
+    owner: "{{ ansible_mgmtuser }}"
+    group: "{{ ansible_mgmtgroup }}"
+    mode: 0664
+
+- name: Create Git destination directory to clone the oc-startup Git repository
+  file:
+    path: "{{ oc_startup_git_dest }}"
+    state: directory
+    owner: "{{ ansible_mgmtuser }}"
+    group: "{{ ansible_mgmtgroup }}"
+    mode: 0775
