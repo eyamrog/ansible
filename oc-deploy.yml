@@ -1,0 +1,19 @@
+---
+- name: Install common Ansible configuration
+  import_playbook: oc-ansible_common.yml
+
+- name: Install oc-deploy
+  hosts: oc-deploy
+  remote_user: ansible
+  become: yes
+
+  tasks:
+    - name: Update hostname
+      hostname:
+        name: oc-deploy
+
+  roles:
+    - ansible_controller
+    - squid
+    - apt-cacher-ng_non_controller
+    - dnsmasq_controller

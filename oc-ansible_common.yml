@@ -1,0 +1,8 @@
+---
+- name: Install common Ansible configuration
+  hosts: oc-deploy
+  remote_user: ubuntu
+  become: yes
+
+  roles:
+    - ansible_common

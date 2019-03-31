@@ -1,0 +1,19 @@
+---
+- name: Install common Ansible configuration
+  import_playbook: oc-ansible_common.yml
+
+- name: Install oc-startup
+  hosts: oc-startup
+  remote_user: ansible
+  become: yes
+
+  tasks:
+    - name: Update hostname
+      hostname:
+        name: oc-startup
+
+  roles:
+    - ansible_controller
+    - squid
+    - apt-cacher-ng_controller
+    - dnsmasq_controller

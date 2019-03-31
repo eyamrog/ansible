@@ -1,0 +1,37 @@
+[ansible_controllers]
+oc-init    ansible_host=10.0.1.6
+oc-startup    ansible_host=10.0.1.254
+oc-deploy    ansible_host=10.0.1.156
+
+[ansible_controllers:vars]
+ansible_python_interpreter=/usr/bin/python3
+# Ansible group
+ansible_mgmtgroup=ansible
+
+# Ansible user
+ansible_mgmtuser=ansible
+
+# Ansible SSH key
+ansible_key=/home/ansible/.ssh/AWS20171012Coda
+
+# Git destination to clone the oc-startup Git repository
+oc_startup_git_dest=ansible
+
+# Git repo for oc-startup
+oc_startup_repo=git@git.rosetta.ericssondevops.com:MELA-AMX-ONE_CORE/MELA-AMX-ONE-CORE.git
+
+
+[platform]
+oc-host    ansible_host=10.0.1.4
+oc-host1    ansible_host=10.0.1.229
+
+[platform:vars]
+ansible_python_interpreter=/usr/bin/python3
+# Ansible group
+ansible_mgmtgroup=ansible
+
+# Ansible user
+ansible_mgmtuser=ansible
+
+# Ansible SSH key
+ansible_key=/home/ansible/.ssh/AWS20171012Coda
